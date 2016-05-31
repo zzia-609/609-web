@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-4.2.xsd   
+    http://www.springframework.org/schema/tx   
+    http://www.springframework.org/schema/tx/spring-tx-4.2.xsd  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd  
+    http://www.springframework.org/schema/mvc  
+    http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+    
+    <context:annotation-config />
+	<context:component-scan base-package="com.zzia.translator.controller" />
+	
+<!-- 	<mvc:annotation-driven/> -->
+
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+    
+    <context:annotation-config />
+	<context:component-scan base-package="com.zzia.translator.service.impl" />
+     
+	<aop:config>  
+        <aop:aspect id="TestAspect" ref="aspectBean">  
+            <!--配置com.spring.service包下所有类或接口的所有方法-->  
+<!--             <aop:pointcut id="businessService" expression="(execution(* com.zzia609.service.impl.*.*(..))) or (execution(* com.zzia609.controller.*.*(..)))" />   -->
+            <aop:pointcut id="businessService" expression="(execution(* com.zzia.translator.controller.*.*(..)))" />  
+            <aop:before pointcut-ref="businessService" method="doBefore"/>  
+            <aop:after pointcut-ref="businessService" method="doAfter"/>  
+<!--             <aop:after-returning pointcut-ref="businessService" method="doAfterReturning"/>   -->
+            <aop:after-throwing pointcut-ref="businessService" method="doThrowing" throwing="ex"/>  
+        </aop:aspect>  
+    </aop:config>  
+      
+<!--     <bean id="aspectBean" class="com.zzia609.aop.TestAspect" /> -->
+    <bean id="aspectBean" class="com.zzia.translator.aop.RequestLogAspect" />
+     
+     <!-- Spring MVC config -->
+     <import resource="classpath*:springMVC-servlet.xml"/>
+
+</beans> 
